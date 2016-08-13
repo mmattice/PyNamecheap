@@ -319,15 +319,15 @@ class Api(object):
                   'Status': 'newpurchase',
                   'Years': '1'
                 }
-		"""
+                """
 
-		# The payload is a dict of GET args that is passed to
-		# the lazy-loading iterator so that it can know how to
-		# get more results.
-		extra_payload = {'Page' : 1}
-		if ListType: extra_payload['ListType'] = ListType
-		if SearchTerm: extra_payload['SearchTerm'] = SearchTerm
-		if PageSize: extra_payload['PageSize'] = PageSize
-		if SortBy: extra_payload['SortBy'] = SortBy
-		payload = self._payload('namecheap.ssl.getList', extra_payload)
-		return self.LazyGetListIterator(self, payload, './/{%(ns)s}CommandResponse/{%(ns)s}SSLListResult/{%(ns)s}SSL' % {'ns' : NAMESPACE})
+                # The payload is a dict of GET args that is passed to
+                # the lazy-loading iterator so that it can know how to
+                # get more results.
+                extra_payload = {'Page' : 1}
+                if ListType: extra_payload['ListType'] = ListType
+                if SearchTerm: extra_payload['SearchTerm'] = SearchTerm
+                if PageSize: extra_payload['PageSize'] = PageSize
+                if SortBy: extra_payload['SortBy'] = SortBy
+                payload = self._payload('namecheap.ssl.getList', extra_payload)
+                return self.LazyGetListIterator(self, payload, './/{%(ns)s}CommandResponse/{%(ns)s}SSLListResult/{%(ns)s}SSL' % {'ns' : NAMESPACE})
