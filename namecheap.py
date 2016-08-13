@@ -358,3 +358,11 @@ class Api(object):
                                 cas.append((cert.attrib['Type'], c.text))
                         results['cacerts'] = cas
                 return results
+
+        # https://www.namecheap.com/support/api/methods/ssl/create.aspx
+        def ssl_create(self, Years, Type, PromotionCode=None, SANStoADD=None):
+                extra_payload = {'Years' : str(Years), 'Type' : Type }
+                if PromotionCode: extra_payload['PromotionCode'] = 'PromotionCode'
+                if SANStoADD: extra_payload['SANStoADD'] = SANStoADD
+                xml = self._call('namecheap.ssl.create', extra_payload)
+                return xml
