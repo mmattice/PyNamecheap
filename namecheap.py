@@ -331,3 +331,30 @@ class Api(object):
                 if SortBy: extra_payload['SortBy'] = SortBy
                 payload = self._payload('namecheap.ssl.getList', extra_payload)
                 return self.LazyGetListIterator(self, payload, './/{%(ns)s}CommandResponse/{%(ns)s}SSLListResult/{%(ns)s}SSL' % {'ns' : NAMESPACE})
+
+        # https://www.namecheap.com/support/api/methods/ssl/get-info.aspx
+        def ssl_getInfo(self, CertificateID, Returncertificate=False, Returntype=False):
+                extra_payload = {'CertificateID' : str(CertificateID) }
+                if Returncertificate: extra_payload['Returncertificate'] = 'true'
+                if Returntype: extra_payload['Returntype'] = 'individual'
+                xml = self._call('namecheap.ssl.getinfo', extra_payload)
+                xpath = './/{%(ns)s}CommandResponse/{%(ns)s}SSLGetInfoResult' % {'ns' : NAMESPACE}
+                sslgir = xml.find(xpath)
+                results = sslgir.attrib
+                xpathcd = './/{%(ns)s}CertificateDetails' % {'ns' : NAMESPACE}
+                for element in sslgir.find(xpathcd):
+                        results[self._tag_without_namespace(element)] = element.text
+                if Returncertificate:
+                        del results['Certificates']
+                        xpathcert = './/{%(ns)s}CertificateDetails/{%(ns)s}Certificates' % {'ns' : NAMESPACE}
+                        certs = sslgir.find(xpathcert)
+                        xpathcert = './/{%(ns)s}Certificate' % {'ns' : NAMESPACE}
+                        xpathcacs = './/{%(ns)s}CaCertificates/{%(ns)s}Certificate' % {'ns' : NAMESPACE}
+                        results['cert'] = certs.find(xpathcert).text
+                        cacerts = certs.find(xpathcacs)
+                        cas = []
+                        for cert in certs.findall(xpathcacs):
+                                c = cert.find(xpathcert)
+                                cas.append((cert.attrib['Type'], c.text))
+                        results['cacerts'] = cas
+                return results
