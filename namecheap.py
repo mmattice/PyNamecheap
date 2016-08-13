@@ -303,3 +303,31 @@ class Api(object):
 		if SortBy: extra_payload['SortBy'] = SortBy
 		payload = self._payload('namecheap.domains.getList', extra_payload)
 		return self.LazyGetListIterator(self, payload, './/{%(ns)s}CommandResponse/{%(ns)s}DomainGetListResult/{%(ns)s}Domain' % {'ns' : NAMESPACE})
+
+	# https://www.namecheap.com/support/api/methods/ssl/get-list.aspx
+	def ssl_getList(self, ListType = None, SearchTerm = None, PageSize = None, SortBy = None):
+		"""Returns an iterable of dicts. Each dict represents one
+		ssl certificate the user has purchased, for example
+                 {'ActivationExpireDate': '',
+                  'CertificateID': '857709',
+                  'ExpireDate': '',
+                  'HostName': '',
+                  'IsExpiredYN': 'false',
+                  'ProviderOrderID': '22283090',
+                  'PurchaseDate': '07/20/2016',
+                  'SSLType': 'positivessl',
+                  'Status': 'newpurchase',
+                  'Years': '1'
+                }
+		"""
+
+		# The payload is a dict of GET args that is passed to
+		# the lazy-loading iterator so that it can know how to
+		# get more results.
+		extra_payload = {'Page' : 1}
+		if ListType: extra_payload['ListType'] = ListType
+		if SearchTerm: extra_payload['SearchTerm'] = SearchTerm
+		if PageSize: extra_payload['PageSize'] = PageSize
+		if SortBy: extra_payload['SortBy'] = SortBy
+		payload = self._payload('namecheap.ssl.getList', extra_payload)
+		return self.LazyGetListIterator(self, payload, './/{%(ns)s}CommandResponse/{%(ns)s}SSLListResult/{%(ns)s}SSL' % {'ns' : NAMESPACE})
