@@ -15,6 +15,10 @@ ENDPOINTS = {
 }
 NAMESPACE = "http://api.namecheap.com/xml.response"
 
+CONTACTKEYS = """OrganizationName JobTitle FirstName LastName Address1 Address2
+City StateProvince StateProvinceChoice PostalCode Country Phone PhoneExt Fax
+EmailAddress""".split()
+
 # https://www.namecheap.com/support/api/error-codes.aspx
 class ApiError(Exception):
 	def __init__(self, number, text):
@@ -344,7 +348,7 @@ class Api(object):
                 xpathcd = './/{%(ns)s}CertificateDetails' % {'ns' : NAMESPACE}
                 for element in sslgir.find(xpathcd):
                         results[self._tag_without_namespace(element)] = element.text
-                if Returncertificate:
+                if Returncertificate and 'Certificates' in results:
                         del results['Certificates']
                         xpathcert = './/{%(ns)s}CertificateDetails/{%(ns)s}Certificates' % {'ns' : NAMESPACE}
                         certs = sslgir.find(xpathcert)
@@ -365,4 +369,17 @@ class Api(object):
                 if PromotionCode: extra_payload['PromotionCode'] = 'PromotionCode'
                 if SANStoADD: extra_payload['SANStoADD'] = SANStoADD
                 xml = self._call('namecheap.ssl.create', extra_payload)
+                return xml
+
+        # https://www.namecheap.com/support/api/methods/ssl/activate.aspx
+        def ssl_activate(self, CertificateID, CSR, Contacts={},
+                         WebServerType='apachessl', extra={}):
+                extra_payload = {'CertificateID' : CertificateID,
+                                 'CSR' : CSR,
+                                 'WebServerType' : WebServerType }
+                extra_payload.update(extra)
+                for ctype, contact in Contacts.items():
+                        for k,v in contact.items():
+                                extra_payload[ctype + k] = v
+                xml = self._call('namecheap.ssl.activate', extra_payload)
                 return xml
