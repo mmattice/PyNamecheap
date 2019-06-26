@@ -18,7 +18,7 @@ setup(
     description='Namecheap API client in Python',
     py_modules=['namecheap'],
     platforms='any',
-    install_requires=['requests'],
+    install_requires=['requests', 'six'],
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',

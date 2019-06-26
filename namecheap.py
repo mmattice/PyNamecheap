@@ -2,6 +2,7 @@ import sys
 import time
 import requests  # pip install requests
 from xml.etree.ElementTree import fromstring
+from six import string_types
 
 inPy3k = sys.version_info[0] == 3
 
@@ -200,7 +201,7 @@ class Api(object):
 
         # For convenience, allow a single domain to be given
         if not inPy3k:
-            if isinstance(domains, basestring):
+            if isinstance(domains, string_types):
                 return self.domains_check([domains]).items()[0][1]
         else:
             if isinstance(domains, str):
